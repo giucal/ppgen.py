@@ -171,7 +171,7 @@ class CharRange:
 
 
 # Predefined charsets.
-common_charsets = {
+COMMON_CHARSETS = {
     "d": set(CharRange("0", "9")),
     "u": set(CharRange("A", "Z")),
     "l": set(CharRange("a", "z")),
@@ -223,7 +223,7 @@ def parse_charset(expr):
 
     # Parse a charset union, e.g. 'ds'.
     try:
-        return tuple(set().union(list(common_charsets[c]) for c in expr))
+        return tuple(set().union(list(COMMON_CHARSETS[c]) for c in expr))
     except KeyError as e:
         raise ValueError("unknown charset: %s" % e.args)
 
