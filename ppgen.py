@@ -155,15 +155,6 @@ class Passphrase(list):
         return bytes(separator).join(self)
 
 
-def char_range(first, last):
-    """
-    Create a character range.
-
-    Return a generator of the characters between first and last.
-    """
-    return (chr(i) for i in range(ord(first), ord(last) + 1))
-
-
 class CharRange:
     """
     A character range.
