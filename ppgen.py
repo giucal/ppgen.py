@@ -230,7 +230,7 @@ def parse_charset(expr):
         raise ValueError("unknown charset: %s" % e.args)
 
 
-if __name__ == "__main__":
+def main():
     from getopt import getopt
     from os.path import basename
     from sys import argv, stderr
@@ -335,3 +335,7 @@ if __name__ == "__main__":
         pp.capitalize()
 
     print(pp.join(separator).decode())
+
+
+if __name__ == "__main__":
+    main()
