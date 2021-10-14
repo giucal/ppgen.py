@@ -2,3 +2,8 @@ ppgen
 =====
 
 A passphrase generation module and command.
+
+Installation
+------------
+
+    pip3 install --user git+https://github.com/giucal/ppgen.py
