@@ -11,6 +11,8 @@ from secrets import randbelow  # Our CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
+__version__ = "0.0.1"
+
 
 def select(source, n):
     """
