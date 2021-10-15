@@ -111,10 +111,12 @@ class Passphrase(list):
         Take:
             charsets    an iterable of sequences of characters
 
-        Honor multiplicity.
+        Honor charsets multiplicity; that is, swap a charset as many
+        times as it appears in `charsets`.
 
         This method can be used to satisfy rigid password policies,
-        or to trivially break dictionary attacks.
+        or to defeat dictionary attacks even in the case of short
+        passphrases.
 
         Return self.
         """
