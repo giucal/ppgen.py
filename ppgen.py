@@ -258,13 +258,13 @@ def main():
         argv[1:],
         "CR:S:T:E:f:h",
         (
-            "--capitalize",
-            "--randomize=",
-            "--separator=",
-            "--translate="
-            "--least-entropy=",
-            "--file=",
-            "--help",
+            "capitalize",
+            "randomize=",
+            "separator=",
+            "translate=",
+            "least-entropy=",
+            "file=",
+            "help",
         ),
     )
 
