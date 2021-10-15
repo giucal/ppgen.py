@@ -252,11 +252,11 @@ def main():
                 "\n    -h --help                    print this message",
                 file=stderr
             )
-        exit(2)
+        return 2
 
     def error(msg, exit_status=1):
         print("Error: %s" % msg, file=stderr)
-        exit(exit_status)
+        return exit_status
 
     source = dictionary("/usr/share/dict/words")
     capitalize = False
@@ -281,7 +281,7 @@ def main():
 
     for flag, arg in options:
         if flag in ("-h", "--help"):
-            usage()
+            return usage()
 
         if flag in ("-f", "--file"):
             source = dictionary(arg)
@@ -298,7 +298,7 @@ def main():
         elif flag in ("-T", "--translate"):
             chars, repls = arg.split(":", 1)
             if len(chars) != len(repls):
-                error("unbalanced mapping: %s", arg)
+                return error("unbalanced mapping: %s", arg)
             for i in range(len(chars)):
                 translate[ord(chars[i])] = ord(repls[i])
 
@@ -306,22 +306,22 @@ def main():
             try:
                 least_entropy = float(arg)
             except ValueError:
-                error("bad entropy value: %s" % arg)
+                return error("bad entropy value: %s" % arg)
 
     if len(positionals) != 1:
-        usage()
+        return usage()
     try:
         v, = positionals
         length = int(v)
     except ValueError:
-        error("invalid length: %s" % v)
+        return error("invalid length: %s" % v)
     if length < 1:
-        error("length must be positive")
+        return error("length must be positive")
 
     pp, entropy = Passphrase.random(source, length)
 
     if entropy < least_entropy:
-        error(
+        return error(
             "insufficient entropy (%f < %f): "
             "generate a longer passphrase or use a bigger dictionary"
             % (entropy, least_entropy)
@@ -338,4 +338,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    from sys import exit
+
+    exit(main())
