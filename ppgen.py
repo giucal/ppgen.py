@@ -29,6 +29,8 @@ def select(source, n):
     """
     # Provisional selection.
     selection = [next(source) for _ in range(n)]
+    # Provisional source length.
+    i = n
 
     # Maintain a random selection as we go over the source.
     for i, el in enumerate(source, n):
