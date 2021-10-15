@@ -202,13 +202,13 @@ def parse_charset(expr):
                 "unexpected content after closing ']': '%s'", empty
             )
 
-        if not fullmatch(r"-?([^-]-[^-]|[^-])*"):
+        if not fullmatch(r"-?([^-]-[^-]|[^-])*", spec):
             raise ValueError("bad charset spec: %s" % spec)
 
         chars = set()
         for sub in findall(r"[^-]-[^-]|[^-]|-", spec):
             if len(sub) == 1:
-                chars.add(sub)
+                chars.add(ord(sub))
             else:
                 chars.update(char_range(*sub.split("-")))
 
