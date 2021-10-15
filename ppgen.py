@@ -291,7 +291,7 @@ def main():
             for i in range(len(chars)):
                 translate[ord(chars[i])] = ord(repls[i])
 
-        elif flag in ("-E", "--entropy", "--least-entropy"):
+        elif flag in ("-E", "--least-entropy"):
             try:
                 least_entropy = float(arg)
             except ValueError:
