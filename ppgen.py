@@ -157,31 +157,20 @@ class Passphrase(list):
         return bytes(separator).join(self)
 
 
-class CharRange:
-    """
-    A character range.
-    """
-
-    def __init__(self, first, last):
-        self.ord_range = range(ord(first), ord(last) + 1)
-        self.start = self.first = first
-        self.stop = chr(ord(last) + 1)
-        self.last = last
-
-    def __iter__(self):
-        return (chr(i) for i in self.ord_range)
+def ord_range(first, last):
+    return range(ord(first), ord(last) + 1)
 
 
 # Predefined charsets.
 COMMON_CHARSETS = {
-    "d": set(CharRange("0", "9")),
-    "u": set(CharRange("A", "Z")),
-    "l": set(CharRange("a", "z")),
+    "d": set(ord_range("0", "9")),
+    "u": set(ord_range("A", "Z")),
+    "l": set(ord_range("a", "z")),
     "s": set().union(
-        CharRange("!", "/"),
-        CharRange(":", "@"),
-        CharRange("[", "`"),
-        CharRange("{", "~"),
+        ord_range("!", "/"),
+        ord_range(":", "@"),
+        ord_range("[", "`"),
+        ord_range("{", "~"),
     )
 }
 
