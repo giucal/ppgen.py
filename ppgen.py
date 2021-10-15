@@ -91,10 +91,7 @@ class Passphrase(list):
 
         Return self.
         """
-        w = (
-            replacement(self[i]) if callable(replacement)
-            else replacement
-        )
+        w = replacement(self[i]) if callable(replacement) else replacement
         self[i] = w
         return self
 
@@ -311,8 +308,7 @@ def main():
     if len(positionals) != 1:
         return usage()
     try:
-        v, = positionals
-        length = int(v)
+        length = int(positionals[0])
     except ValueError:
         return error("invalid length: %s" % v)
     if length < 1:
