@@ -103,9 +103,10 @@ class Passphrase(list):
         """
         return self.replace(i, bytearray.title)
 
-    def intermix(self, charsets, keep_if_complies=False):
+    def randomize(self, charsets, keep_if_complies=False):
         """
-        Intermix the given charsets at random positions (without replacement).
+        Swap characters at random positions with characters from the given
+        charsets (without replacement).
 
         Take:
             charsets    an iterable of sequences of characters
@@ -257,17 +258,17 @@ def main():
 
     source = dictionary("/usr/share/dict/words")
     capitalize = False
-    intermix = []
+    randomize = []
     least_entropy = 0
     translate = bytearray(range(256))
     separator = b" "
 
     options, positionals = getopt(
         argv[1:],
-        "CI:S:T:E:f:h",
+        "CR:S:T:E:f:h",
         (
             "--capitalize",
-            "--intermix=",
+            "--randomize=",
             "--separator=",
             "--translate="
             "--least-entropy=",
@@ -286,8 +287,8 @@ def main():
         elif flag in ("-C", "--capitalize"):
             capitalize = True
 
-        elif flag in ("-I", "--intermix"):
-            intermix.append(parse_charset(arg))
+        elif flag in ("-R", "--randomize"):
+            randomize.append(parse_charset(arg))
 
         elif flag in ("-S", "--separator"):
             separator = arg.encode("UTF-8")
@@ -324,9 +325,9 @@ def main():
         )
 
     pp.translate(translate)
-    if intermix:
-        print(intermix)
-        pp.intermix(intermix)
+    if randomize:
+        print(randomize)
+        pp.randomize(randomize)
     if capitalize:
         pp.capitalize()
 
