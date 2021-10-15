@@ -214,7 +214,7 @@ def parse_charset(expr):
 
     # Parse a charset union, e.g. 'ds'.
     try:
-        return tuple(set().union(list(COMMON_CHARSETS[c]) for c in expr))
+        return tuple(set().union(*(COMMON_CHARSETS[cs] for cs in expr)))
     except KeyError as e:
         raise ValueError("unknown charset: %s" % e.args)
 
@@ -317,7 +317,6 @@ def main():
 
     pp.translate(translate)
     if randomize:
-        print(randomize)
         pp.randomize(randomize)
     if capitalize:
         pp.capitalize()
