@@ -225,7 +225,7 @@ def parse_charset(expr):
             if len(sub) == 1:
                 chars.add(ord(sub))
             else:
-                chars.update(char_range(*sub.split("-")))
+                chars.update(ord_range(*sub.split("-")))
 
         return tuple(chars)
 
