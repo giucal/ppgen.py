@@ -72,7 +72,7 @@ class Passphrase(list):
         self._randbelow = randbelow
 
     @classmethod
-    def random(cls, dictionary, length):
+    def random(cls, dictionary, length, randbelow=randbelow):
         """
         Generate a random passphrase.
 
@@ -83,8 +83,8 @@ class Passphrase(list):
         Return a passphrase made of a random selection of words,
         and its entropy.
         """
-        words, space = select(dictionary, length, self._randbelow)
-        return Passphrase(words), log2(space) * length
+        words, space = select(dictionary, length, randbelow)
+        return Passphrase(words, randbelow), log2(space) * length
 
     def replace(self, i, replacement):
         """
