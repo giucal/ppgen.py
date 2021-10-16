@@ -368,7 +368,7 @@ def main():
         elif flag in ("-T", "--translate"):
             xs, ys = arg.encode().split(b":", 1)
             if len(xs) < len(ys):
-                return error("--translate: characters in <ys> outnumber <xs>")
+                return error("%s: characters in <ys> outnumber <xs>" % flag)
             for x, y in zip(xs, ys):
                 translate[x] = y
             for x in xs[len(ys):]:
@@ -378,7 +378,7 @@ def main():
             try:
                 least_entropy = float(arg)
             except ValueError:
-                return error("bad entropy value: %s" % arg)
+                return error("%s: bad entropy value: %s" % (flag, arg))
 
     if len(positionals) != 1:
         return usage()
