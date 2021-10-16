@@ -68,10 +68,10 @@ charaset it is to be re-drawn:
     -R<charset>
     --randomize=<charset>
 
-The `<charset>` argument is either:
+The `<charset>` argument is a combination of:
 
-  - A regex-like charset, e.g. `[0-9A-F]`.
-  - A union of the predefined charsets
+  - *one* optional regex-like charset, e.g. `[0-9A-F]`, surrounded by
+  - unions of the predefined charsets
 
       | Charset                  | Tag |
       | ------------------------ | --- |
@@ -80,7 +80,7 @@ The `<charset>` argument is either:
       | ASCII lower-case letters | `l` |
       | ASCII symbols            | `s` |
 
-    expressed as a concatenation of their tags, e.g. `duls`.
+    expressed as concatenations of their tags, e.g. `duls`.
 
 Examples:
 
@@ -125,24 +125,30 @@ shell. Otherwise, we might get errors like:
 
 Or worse, unexpected behaviour.
 
-We also put the dash, `-`, first in the charset, since it would otherwise
-carry the special meaning of range operator, as e.g. in `[A-Z]`
-(the ASCII upper-case letters).
+We also put the dash, `-`, first in the charset, to avoid confusion as to
+whether it carries the special meaning of range operator, as e.g. in `[A-Z]`.
 
-To be precise, the syntax for a regex-like `<charset>` is:
+To be precise, the syntax for a regex-like charset is:
 
-    <charset>   -> "[" (<range> | <character>) ... "]"
-    <range>     -> <character> "-" <character>
-    <character> -> any character that the shell lets through
+    <enumeration> -> "[" (<range> | <character>) ... "]"
+    <range>       -> <character> "-" <character>
+    <character>   -> any character that the shell lets through
 
-Yes, `<character>` can also be a dash.
+So `<character>` can also be a dash or a square bracket. How?
 
-We try to match adjacent `<range>`s, left to right, and fall back to matching
-`<character>`s only if and when we fail.
+  - Ppgen tries to match zero or more adjacent `<range>`s, left to right,
+    optionally intermixed with `<character>`s.
 
-So, for example, `[----]` represents the characters from `-` to `-`
-(inclusive), plus the `-` character; while `[-a-z]` represents the character
-`-` plus the ASCII lower-case letters.
+    In general, a dash appearing where it cannot be interpreted as an operator
+    stands for itself.
+
+    So, for example, `[----]` represents, literally, the characters from `-` to
+    `-`, plus the `-` character; while `[-a-z]` and `[a-z-]` both represent the
+    character `-` plus the ASCII lower-case letters.
+
+  - Given a `<charset>` expression, `<enumeration>`s are matched greedly, so at
+    most one of them can appear per expression, but the upside is that they can
+    contain square brackets.
 
 **Translate.**
 To apply deterministic substitutions:
