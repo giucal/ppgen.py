@@ -235,7 +235,7 @@ def main():
             print(
                 "\nOptions:"
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
-                "\n    -I --intermix=<charset>      intermix the given charset"
+                "\n    -R --randomize=<charset>     swap random character with another from <charset>"
                 "\n    -S --separator=<string>      separate words with <string> (default: space)"
                 "\n    -T --translate=<xs>:<ys>     translate corresponding characters of <xs> to <ys>"
                 "\n    -E --least-entropy=<H>       require at least <H> bits of entropy"
