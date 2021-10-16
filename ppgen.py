@@ -7,14 +7,14 @@ Author:  Giuseppe Calabrese
 Copying: Public Domain
 """
 
-from secrets import randbelow  # Our CSPRNG.
+from secrets import randbelow  # Our default CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
 __version__ = "0.0.1"
 
 
-def select(source, n):
+def select(source, n, randbelow=randbelow):
     """
     Randomly select, on-line, from an iterable of unknown length.
 
@@ -22,8 +22,12 @@ def select(source, n):
     rather, the selection is drawn during iteration.
 
     Take:
-        source  a (finite) iterable that provides the elements
-        n       the number of elements to select
+        source      a (finite) iterable that provides the elements
+        n           the number of elements to select
+        randbelow   a random integer generator (default: secrets.randbelow)
+
+    The `randbelow` argument must be a function that accepts a positive
+    integer `n` and returns a random integer in the range [0, `n`).
 
     Return the selection (as a list) and the number of iterated elements.
     """
@@ -62,8 +66,9 @@ class Passphrase(list):
     A passphrase builder.
     """
 
-    def __init__(self, words):
+    def __init__(self, words, randbelow=randbelow):
         super().__init__(bytearray(w) for w in words)
+        self._randbelow = randbelow
 
     @classmethod
     def random(cls, dictionary, length):
@@ -77,7 +82,7 @@ class Passphrase(list):
         Return a passphrase made of a random selection of words,
         and its entropy.
         """
-        words, space = select(dictionary, length)
+        words, space = select(dictionary, length, self._randbelow)
         return Passphrase(words), log2(space) * length
 
     def replace(self, i, replacement):
@@ -124,10 +129,10 @@ class Passphrase(list):
         """
         replacements = set()
         for cs in charsets:
-            c = cs[randbelow(len(cs))]
+            c = cs[self._randbelow(len(cs))]
             while True:
-                i = randbelow(len(self))
-                j = randbelow(len(self[i]))
+                i = self._randbelow(len(self))
+                j = self._randbelow(len(self[i]))
                 if (i, j) not in replacements:
                     break
             self[i][j] = c
