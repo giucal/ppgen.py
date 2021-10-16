@@ -130,6 +130,8 @@ class Passphrase(list):
         """
         replacements = set()
         for cs in charsets:
+            if not cs:
+                continue
             c = cs[self._randbelow(len(cs))]
             while True:
                 i = self._randbelow(len(self))
