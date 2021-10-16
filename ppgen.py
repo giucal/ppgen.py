@@ -227,12 +227,14 @@ def main():
     from sys import argv, stderr
 
     def usage(msg=None):
-        print("Usage: %s [-h] [options] <length>" % basename(__file__))
+        print("Usage: %s [-h] [options] <length>" % basename(argv[0]))
 
         if msg:
             print("Error: %s" % msg, file=stderr)
         else:
             print(
+                "\nRandom passphrase generator."
+                "\n"
                 "\nOptions:"
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
                 "\n    -R --randomize=<charset>     swap random character with another from <charset>"
