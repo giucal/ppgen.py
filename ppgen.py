@@ -166,6 +166,15 @@ class Passphrase(list):
 
 
 def ord_range(first, last):
+    """
+    A bounds-included range of character ordinals.
+
+    Take:
+        first   the first character in the range
+        last    the last character in the range
+
+    Return a range from `ord(first)` to `ord(last)` inclusive.
+    """
     return range(ord(first), ord(last) + 1)
 
 
