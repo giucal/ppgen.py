@@ -31,6 +31,9 @@ def select(source, n, randbelow=randbelow):
 
     Return the selection (as a list) and the number of iterated elements.
     """
+    if n < 0:
+        raise ValueError("selection size must be non-negative")
+
     # Provisional selection.
     head = [next(source) for _ in range(n)]
     selection = [head.pop(randbelow(len(head))) for _ in range(n)]
@@ -83,6 +86,9 @@ class Passphrase(list):
         Return a passphrase made of a random selection of words,
         and its entropy.
         """
+        if length <= 0:
+            raise ValueError("passphrase length must be positive")
+
         words, space = select(dictionary, length, randbelow)
         return Passphrase(words, randbelow), log2(space) * length
 
