@@ -350,7 +350,11 @@ def main():
             capitalize = True
 
         elif flag in ("-R", "--randomize"):
-            randomize.append(tuple(parse_charset(arg)))
+            try:
+                cs = parse_charset(arg)
+            except ValueError as e:
+                return error("%s: %s" % (flag, *e.args))
+            randomize.append(tuple(cs))
 
         elif flag in ("-S", "--separator"):
             separator = arg.encode("UTF-8")
