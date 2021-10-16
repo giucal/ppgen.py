@@ -196,44 +196,90 @@ def parse_charset(expr):
     """
     Parse a charset expression.
 
-    An expression can be of two forms:
+    A charset expression can contain two forms of charset specifications:
+    unions and enumerations.
 
-      - A regexp-like set (e.g. [-.?!0-9], which represents the set
-        {'-', '.', '?', '!', '0', ..., '9'}).
-      - A combination of the four letters 'd', 'u', 'l', and 's',
-        which represent, respectively,
-          - decimal digits,
-          - ASCII upper-case letters,
-          - ASCII lower-case letters, and
-          - ASCII symbols.
+    Formally:
+
+        <charset> -> [ <union> ] [ <enum> [ <union> ] ]
+
+    At most one enumeration can appear in a given expression (because it
+    is matched greedly; see below).
+
+    Unions
+    ------
+
+    A union is a juxtaposition of any of the predefined charsets' tags:
+
+      | Charset                  | Tag |
+      | ------------------------ | --- |
+      | decimal digits           | `d` |
+      | ASCII upper-case letters | `u` |
+      | ASCII lower-case letters | `l` |
+      | ASCII symbols            | `s` |
+
+    Formally:
+
+        <union> -> ( "d" | "u" | "l" | "s" ) ...
+
+    Enumerations
+    ------------
+
+    An enumeration is a regex-like set, e.g. `[0-9A-Z-.@!?]`.
+
+    Formally:
+
+        <enumeration> -> "[" ( <range> | <character> ) ... "]"
+        <range>       -> <character> "-" <character>
+        <character>   -> any character
+
+    The only special character is the dash.
+
+    A `<character>` can also be a dash or square bracket.
+
+    The closing bracket is the right-most one in `expr`. This allows for
+    square brackets inside the enumeration without the need for an escaping
+    scheme.
+
+    An enumeration is matched as a sequence of adjacent `<range>`s,
+    left to right; falling back to matching a single `<character>` only if
+    and when that should fail (and then reverting to matching ranges again).
 
     Return the represented charset.
     """
+    charset = set()
+
+    if not expr:
+        return charset
+
     if expr[0] == "[":
-        # Parse a charset spec, e.g. [-.?!0-9].
-        spec, unexpected = expr[1:].split("]", 1)
-        if unexpected:
-            raise ValueError(
-                "unexpected content after closing ']': '%s'", empty
-            )
+        # Parse an enumeration.
+        try:
+            spec, rest = expr[1:].rsplit("]", 1)
+        except ValueError:
+            raise ValueError("bad charset specification: %s" % expr)
 
-        if not fullmatch(r"-?([^-]-[^-]|[^-])*", spec):
-            raise ValueError("bad charset spec: %s" % spec)
+        if rest:
+            charset.update(parse_charset(rest))
 
-        chars = set()
-        for sub in findall(r"[^-]-[^-]|[^-]|-", spec):
+        for sub in findall(r"[^-]-[^-]|.", spec):
             if len(sub) == 1:
-                chars.add(ord(sub))
+                charset.add(ord(sub))
             else:
-                chars.update(ord_range(*sub.split("-")))
+                charset.update(ord_range(*sub.split("-")))
 
-        return tuple(chars)
+        return charset
 
-    # Parse a charset union, e.g. 'ds'.
-    try:
-        return tuple(set().union(*(COMMON_CHARSETS[cs] for cs in expr)))
-    except KeyError as e:
-        raise ValueError("unknown charset: %s" % e.args)
+    # Parse a union.
+    for i, tag in enumerate(expr):
+        if tag == "[":
+            return charset.union(parse_charset(expr[i:]))
+        try:
+            charset.update(COMMON_CHARSETS[tag])
+        except KeyError as e:
+            raise ValueError("unknown charset tag: %s" % e.args)
+
+    return charset
 
 
 def main():
@@ -302,7 +348,7 @@ def main():
             capitalize = True
 
         elif flag in ("-R", "--randomize"):
-            randomize.append(parse_charset(arg))
+            randomize.append(tuple(parse_charset(arg)))
 
         elif flag in ("-S", "--separator"):
             separator = arg.encode("UTF-8")
