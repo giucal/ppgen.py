@@ -32,7 +32,8 @@ def select(source, n, randbelow=randbelow):
     Return the selection (as a list) and the number of iterated elements.
     """
     # Provisional selection.
-    selection = [next(source) for _ in range(n)]
+    head = [next(source) for _ in range(n)]
+    selection = [head.pop(randbelow(len(head))) for _ in range(n)]
     # Provisional source length.
     i = n
 
