@@ -135,7 +135,7 @@ class Passphrase(list):
 
         return self
 
-    def translate(self, table):
+    def translate(self, table, delete=b""):
         """
         Apply a translation to all the words.
 
@@ -144,7 +144,7 @@ class Passphrase(list):
         Return self.
         """
         for i in range(len(self)):
-            self[i] = self[i].translate(table)
+            self[i] = self[i].translate(table, delete)
         return self
 
     def join(self, separator=b" "):
@@ -254,6 +254,7 @@ def main():
     randomize = []
     least_entropy = 0
     translate = bytearray(range(256))
+    delete = bytearray()
     separator = b" "
 
     options, positionals = getopt(
@@ -287,11 +288,13 @@ def main():
             separator = arg.encode("UTF-8")
 
         elif flag in ("-T", "--translate"):
-            chars, repls = arg.split(":", 1)
-            if len(chars) != len(repls):
-                return error("unbalanced mapping: %s", arg)
-            for i in range(len(chars)):
-                translate[ord(chars[i])] = ord(repls[i])
+            xs, ys = arg.encode().split(b":", 1)
+            if len(xs) < len(ys):
+                return error("--translate: characters in <ys> outnumber <xs>")
+            for x, y in zip(xs, ys):
+                translate[x] = y
+            for x in xs[len(ys):]:
+                delete.append(x)
 
         elif flag in ("-E", "--least-entropy"):
             try:
@@ -317,7 +320,7 @@ def main():
             % (entropy, least_entropy)
         )
 
-    pp.translate(translate)
+    pp.translate(translate, delete)
     if randomize:
         pp.randomize(randomize)
     if capitalize:
