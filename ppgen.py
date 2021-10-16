@@ -111,7 +111,7 @@ class Passphrase(list):
         """
         return self.replace(i, bytearray.title)
 
-    def randomize(self, charsets, keep_if_complies=False):
+    def randomize(self, charsets):
         """
         Swap characters at random positions with characters from the given
         charsets (without replacement).
