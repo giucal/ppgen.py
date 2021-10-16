@@ -222,7 +222,7 @@ def parse_charset(expr):
 
 
 def main():
-    from getopt import getopt
+    from getopt import getopt, GetoptError
     from os.path import basename
     from sys import argv, stderr
 
@@ -259,19 +259,22 @@ def main():
     delete = bytearray()
     separator = b" "
 
-    options, positionals = getopt(
-        argv[1:],
-        "CR:S:T:E:f:h",
-        (
-            "capitalize",
-            "randomize=",
-            "separator=",
-            "translate=",
-            "least-entropy=",
-            "file=",
-            "help",
-        ),
-    )
+    try:
+        options, positionals = getopt(
+            argv[1:],
+            "CR:S:T:E:f:h",
+            (
+                "capitalize",
+                "randomize=",
+                "separator=",
+                "translate=",
+                "least-entropy=",
+                "file=",
+                "help",
+            ),
+        )
+    except GetoptError as err:
+        return error(err, 2)
 
     for flag, arg in options:
         if flag in ("-h", "--help"):
