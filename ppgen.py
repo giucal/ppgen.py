@@ -118,6 +118,21 @@ class Passphrase(list):
         """
         return self.replace(i, bytearray.title)
 
+    def shorten_each(self, max_length):
+        """
+        Shorten words.
+
+        Take:
+            max_length  maximum word length
+
+        Truncate words to `max_length` characters (if they are longer).
+
+        Return self.
+        """
+        for i in range(len(self)):
+            self[i] = self[i][:max_length]
+        return self
+
     def randomize(self, charsets):
         """
         Swap characters at random positions with characters from the given
@@ -411,9 +426,7 @@ def main():
         )
 
     if just:
-        for i in range(len(pp)):
-            pp.replace(i, lambda w: w[:just])
-
+        pp.shorten_each(just)
     pp.translate(translate, delete)
     if randomize:
         pp.randomize(randomize)
