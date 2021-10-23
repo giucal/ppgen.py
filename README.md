@@ -20,7 +20,7 @@ the various invocations.)
 
 ### Checks
 
-One check is currenly supported: that of least entropy.
+One check is currently supported: that of least entropy.
 
 **Least entropy.**
 To ensure that the generated passphrase contains at least a minimum bits of
@@ -29,9 +29,9 @@ entropy:
     -E<min-allowed-entropy>
     --least-entropy=<min-allowed-entropy>
 
-The length argument is nevertheless *required*. Ppgen simply checks that the
+The length argument is nevertheless *required*. Ppgen will simply check that the
 entropy bound is satisfied, given the provided length and dictionary (size).
-If the bound is not satisfied, ppgen terminates with an error and does not
+If the bound is not satisfied, ppgen will terminate with an error and will not
 output any passphrase.
 
 Examples:
@@ -63,7 +63,7 @@ Example:
 
 **Randomize.**
 To randomize one character in a random position, specifying from which
-charaset it is to be re-drawn:
+charset it is to be re-drawn:
 
     -R<charset>
     --randomize=<charset>
@@ -84,7 +84,7 @@ The `<charset>` argument is a combination of:
 
 Examples:
 
-Randomize with one ASCII printable, non-blank character.
+Randomize with one printable, non-blank, ASCII character.
 
     % ppgen -Rduls 6
     solanum stokehold cowpea firmisternous cockbird dionymFl
@@ -92,13 +92,13 @@ Randomize with one ASCII printable, non-blank character.
 
 (The indicator is added for the sake of the reader.)
 
-Randomize with two ASCII printable, non-blank characters.
+Randomize with two printable, non-blank, ASCII characters.
 
     % ppgen -Rduls -Rduls 6
     s5lanum stokehold cowpea firmisternous c2ckbird dionymal
      ^                                      ^
 
-(They happened to be both digits.)
+(They both happened to be digits.)
 
 Randomize with a digit, an upper-case letter, and a symbol.
 
@@ -109,7 +109,7 @@ Randomize with a digit, an upper-case letter, and a symbol.
 This is typical, as many password requirements include at-least-one-*
 clauses.
 
-Randomize with the characters `.,?!@_-#` (and only these).
+Randomize with the characters "`.,?!@_-#`" (and only these).
 
     % ppgen '-R[-.,?!@_#]' 6
     solanum stokehold cowpea firmisternous cockbird !ionymal
@@ -146,9 +146,9 @@ So `<character>` can also be a dash or a square bracket. How?
     `-`, plus the `-` character; while `[-a-z]` and `[a-z-]` both represent the
     character `-` plus the ASCII lower-case letters.
 
-  - Given a `<charset>` expression, `<enumeration>`s are matched greedly, so at
-    most one of them can appear per expression, but the upside is that they can
-    contain square brackets.
+  - Given a `<charset>` expression, `<enumeration>`s are matched greedily, so at
+    most one of them can appear per expression (the upside being that they can
+    contain square brackets without any escaping).
 
 **Translate.**
 To apply deterministic substitutions:
@@ -157,8 +157,8 @@ To apply deterministic substitutions:
     --translate=<xs>:<ys>
 
 Each character of `<xs>` will be replaced with the corresponding character
-of `<ys>`. Surplus characters, which do not have an image in `<ys>`,
-are deleted.
+of `<ys>`. Surplus characters, which do not have an image in `<ys>`, will be
+deleted.
 
 Examples:
 
@@ -196,7 +196,7 @@ To choose a different dictionary file:
     --file=<dictionary>
 
 The `<dictionary>` argument should point to a file containing one word
-per line. The file is processed on-line, hence it can be a non-seekable
+per line. The file will be processed on-line, hence it can be a non-seekable
 stream, and have any (finite) length.
 
 Installation
