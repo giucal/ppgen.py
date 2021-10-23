@@ -324,9 +324,9 @@ def main():
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
                 "\n    -W --word-length=<n>         take just <n> characters per word"
                 "\n    -R --randomize=<charset>     swap random character with another from <charset>"
-                "\n    -S --separator=<string>      separate words with <string> (default: space)"
                 "\n    -T --translate=<xs>:<ys>     translate corresponding characters of <xs> to <ys>"
                 "\n    -E --least-entropy=<H>       require at least <H> bits of entropy"
+                "\n    -s --separator=<string>      separate words with <string> (default: space)"
                 "\n    -f --file=<dictionary-file>  draw words from <dictionary-file>"
                 "\n    -h --help                    print this message",
                 file=stderr
@@ -349,14 +349,14 @@ def main():
     try:
         options, positionals = getopt(
             argv[1:],
-            "CW:R:S:T:E:f:h",
+            "CW:R:T:E:s:f:h",
             (
                 "capitalize",
                 "word-length=",
                 "randomize=",
-                "separator=",
                 "translate=",
                 "least-entropy=",
+                "separator=",
                 "file=",
                 "help",
             ),
@@ -389,7 +389,7 @@ def main():
                 return error("%s: %s" % (flag, *e.args))
             randomize.append(tuple(cs))
 
-        elif flag in ("-S", "--separator"):
+        elif flag in ("-s", "--separator"):
             separator = arg.encode("UTF-8")
 
         elif flag in ("-T", "--translate"):

@@ -191,12 +191,12 @@ Example:
 
 To use a given character (or string) `<sep>` as word separator:
 
-    -S<sep>
+    -s<sep>
     --separator=<sep>
 
 Example:
 
-    % ppgen -S- 6
+    % ppgen -s- 6
     solanum-stokehold-cowpea-firmisternous-cockbird-dionymal
 
 ### Dictionary
