@@ -228,7 +228,7 @@ def parse_charset(expr):
         <charset> -> [ <union> ] [ <enum> [ <union> ] ]
 
     At most one enumeration can appear in a given expression (because it
-    is matched greedly; see below).
+    is matched greedily; see below).
 
     Unions
     ------
