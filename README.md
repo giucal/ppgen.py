@@ -179,12 +179,12 @@ Examples:
 **Shorten words.**
 To take just the first `<n>` characters of each word:
 
-    -J<n>
-    --just=<n>
+    -W<n>
+    --word-length=<n>
 
 Example:
 
-    % ppgen -J4 6
+    % ppgen -W4 6
     sola stok cowp firm cock dion
 
 ### Presentation

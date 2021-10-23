@@ -322,7 +322,7 @@ def main():
                 "\n"
                 "\nOptions:"
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
-                "\n    -J --just=<n>                take just <n> characters per word"
+                "\n    -W --word-length=<n>         take just <n> characters per word"
                 "\n    -R --randomize=<charset>     swap random character with another from <charset>"
                 "\n    -S --separator=<string>      separate words with <string> (default: space)"
                 "\n    -T --translate=<xs>:<ys>     translate corresponding characters of <xs> to <ys>"
@@ -344,15 +344,15 @@ def main():
     translate = bytearray(range(256))
     delete = bytearray()
     separator = b" "
-    just = False
+    max_word_length = False
 
     try:
         options, positionals = getopt(
             argv[1:],
-            "CJ:R:S:T:E:f:h",
+            "CW:R:S:T:E:f:h",
             (
                 "capitalize",
-                "just=",
+                "word-length=",
                 "randomize=",
                 "separator=",
                 "translate=",
@@ -374,13 +374,13 @@ def main():
         elif flag in ("-C", "--capitalize"):
             capitalize = True
 
-        elif flag in ("-J", "--just"):
+        elif flag in ("-W", "--word-length"):
             try:
-                just = int(arg)
+                max_word_length = int(arg)
             except ValueError:
                 return error("%s: not a length: %s" % (flag, arg))
-            if just <= 0:
-                return error("%s: bad prefix length: %s <= 0" % (flag, arg))
+            if max_word_length <= 0:
+                return error("%s: illegal maximum word length: %s <= 0" % (flag, arg))
 
         elif flag in ("-R", "--randomize"):
             try:
@@ -425,8 +425,8 @@ def main():
             % (entropy, least_entropy)
         )
 
-    if just:
-        pp.shorten_each(just)
+    if max_word_length:
+        pp.shorten_each(max_word_length)
     pp.translate(translate, delete)
     if randomize:
         pp.randomize(randomize)
