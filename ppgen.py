@@ -307,6 +307,7 @@ def main():
                 "\n"
                 "\nOptions:"
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
+                "\n    -J --just=<n>                take just <n> characters per word"
                 "\n    -R --randomize=<charset>     swap random character with another from <charset>"
                 "\n    -S --separator=<string>      separate words with <string> (default: space)"
                 "\n    -T --translate=<xs>:<ys>     translate corresponding characters of <xs> to <ys>"
@@ -328,13 +329,15 @@ def main():
     translate = bytearray(range(256))
     delete = bytearray()
     separator = b" "
+    just = False
 
     try:
         options, positionals = getopt(
             argv[1:],
-            "CR:S:T:E:f:h",
+            "CJ:R:S:T:E:f:h",
             (
                 "capitalize",
+                "just=",
                 "randomize=",
                 "separator=",
                 "translate=",
@@ -355,6 +358,14 @@ def main():
 
         elif flag in ("-C", "--capitalize"):
             capitalize = True
+
+        elif flag in ("-J", "--just"):
+            try:
+                just = int(arg)
+            except ValueError:
+                return error("%s: not a length: %s" % (flag, arg))
+            if just <= 0:
+                return error("%s: bad prefix length: %s <= 0" % (flag, arg))
 
         elif flag in ("-R", "--randomize"):
             try:
@@ -398,6 +409,10 @@ def main():
             "generate a longer passphrase or use a bigger dictionary"
             % (entropy, least_entropy)
         )
+
+    if just:
+        for i in range(len(pp)):
+            pp.replace(i, lambda w: w[:just])
 
     pp.translate(translate, delete)
     if randomize:

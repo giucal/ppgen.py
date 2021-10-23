@@ -176,6 +176,17 @@ Examples:
 
 (Missing characters have been indicated under their old word-wise position.)
 
+**Shorten words.**
+To take just the first `<n>` characters of each word:
+
+    -J<n>
+    --just=<n>
+
+Example:
+
+    % ppgen -J4 6
+    sola stok cowp firm cock dion
+
 ### Presentation
 
 To use a given character (or string) `<sep>` as word separator:
