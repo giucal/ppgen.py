@@ -90,7 +90,8 @@ class Passphrase(list):
             raise ValueError("passphrase length must be positive")
 
         words, space = select(dictionary, length, randbelow)
-        return Passphrase(words, randbelow), log2(space) * length
+        entropy = sum(log2(n) for n in range(space, space - length, -1))
+        return Passphrase(words, randbelow), entropy
 
     def replace(self, i, replacement):
         """

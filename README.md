@@ -41,7 +41,7 @@ Examples:
       235886  235886 2493109 /usr/share/dict/words
 
     % ppgen -E90 5
-    Error: insufficient entropy (89.238651 < 90.000000): generate a longer passphrase or use a bigger dictionary
+    Error: insufficient entropy (89.238590 < 90.000000): generate a longer passphrase or use a bigger dictionary
 
     % ppgen -E90 6
     solanum stokehold cowpea firmisternous cockbird dionymal
