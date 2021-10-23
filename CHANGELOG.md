@@ -3,6 +3,13 @@ Changelog
 
 Relevant changes from version to version.
 
+0.3.0
+-----
+
+  - Add `Passphrase.shorten_each` method
+  - Rename `-J/--just` option to `-W/--word-length`
+  - Rename `-S` short flag (`--separator`) to `-s`
+
 0.2.0
 -----
 
