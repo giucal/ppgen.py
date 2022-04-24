@@ -30,7 +30,7 @@ entropy:
     --least-entropy=<min-allowed-entropy>
 
 The length argument is nevertheless *required*. Ppgen will simply check that the
-entropy bound is satisfied, given the provided length and dictionary (size).
+entropy bound is satisfied, given the provided length and dictionary size.
 If the bound is not satisfied, ppgen will terminate with an error and will not
 output any passphrase.
 
@@ -106,8 +106,7 @@ Randomize with a digit, an upper-case letter, and a symbol.
     solanum stokehold cowpea firmiUternous cockbird di/ny9al
                                   ^                   ^  ^
 
-This is typical, as many password requirements include at-least-one-*
-clauses.
+This is a typical password requirement.
 
 Randomize with the characters "`.,?!@_-#`" (and only these).
 
@@ -115,8 +114,8 @@ Randomize with the characters "`.,?!@_-#`" (and only these).
     solanum stokehold cowpea firmisternous cockbird !ionymal
                                                     ^
 
-Again, this is a typical (if utterly idiotic in its arbitrary strictness)
-requirement.
+Again, this is a typical requirement (if utterly idiotic in its arbitrary
+strictness).
 
 Note two things. We single-quote the argument to make it opaque to the
 shell. Otherwise, we might get errors like:
@@ -208,7 +207,7 @@ To choose a different dictionary file:
 
 The `<dictionary>` argument should point to a file containing one word
 per line. The file will be processed on-line, hence it can be a non-seekable
-stream, and have any (finite) length.
+stream, and have any finite length.
 
 Installation
 ------------
