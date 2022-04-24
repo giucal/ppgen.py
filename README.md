@@ -172,7 +172,7 @@ Examples:
 
     % ppgen -Thate:love -Twar: 6
     solnum svokelold cope fimisvenous cockbid dionyml
-       a     ^   ^     w a  r    r     ^    r       a
+       a    ^   ^      w a  r  ^ r          r       a
 
 (Missing characters have been indicated under their old word-wise position.)
 
