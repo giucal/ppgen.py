@@ -179,7 +179,7 @@ class Passphrase(list):
 
     def join(self, separator=b" "):
         """
-        Joins the words of this passphrase.
+        Join the words of this passphrase.
 
         Take:
             separator   a str-like object to separate words (default is space)
