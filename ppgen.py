@@ -11,7 +11,7 @@ from secrets import randbelow  # Our default CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 
 def select(source, n, randbelow=randbelow):
@@ -49,18 +49,21 @@ def select(source, n, randbelow=randbelow):
     return selection, i + 1
 
 
-def dictionary(path):
+def dictionary(path, encoding=None):
     """
     Create an iterator from a dictionary file.
 
     Take:
-        path    the path of a dictionary file, listing a set of
-                words one per line
+        path     the path of a dictionary file, listing a set of
+                 words one per line
+        encoding the text encoding of the file; None (default)
+                 means that the encoding depends on the current
+                 locale
 
     A generator yielding each line of the dictionary file, with
     whitespace strip()ed.
     """
-    with open(path, "rb") as f:
+    with open(path, "rt", encoding=encoding) as f:
         for line in f:
             yield line.strip()
 
@@ -71,7 +74,7 @@ class Passphrase(list):
     """
 
     def __init__(self, words, randbelow=randbelow):
-        super().__init__(bytearray(w) for w in words)
+        super().__init__(list(w) for w in words)
         self._randbelow = randbelow
 
     @classmethod
@@ -101,13 +104,15 @@ class Passphrase(list):
             i               the index of the word to replace
             replacement     the replacement function (or word)
 
-        The `replacement` argument should either be a word or a callable, i.e.
-        a function of the generic word or a constant function `lambda _: const`.
+        The `replacement` argument should either be a word, or a callable that
+        takes a word and returns a replacement.
 
         Return self.
         """
-        w = replacement(self[i]) if callable(replacement) else replacement
-        self[i] = w
+        if callable(replacement):
+            self[i] = list(replacement("".join(self[i])))
+        else:
+            self[i] = list(replacement)
         return self
 
     def capitalize(self, i=0):
@@ -116,7 +121,7 @@ class Passphrase(list):
 
         Return self.
         """
-        return self.replace(i, bytearray.title)
+        return self.replace(i, str.title)
 
     def shorten_each(self, max_length):
         """
@@ -165,19 +170,19 @@ class Passphrase(list):
 
         return self
 
-    def translate(self, table, delete=b""):
+    def translate(self, table):
         """
         Apply a translation to all the words.
 
-        Same arguments and semantics as bytearray.translate().
+        Same arguments and semantics as str.translate().
 
         Return self.
         """
         for i in range(len(self)):
-            self[i] = self[i].translate(table, delete)
+            self[i] = list("".join(self[i]).translate(table))
         return self
 
-    def join(self, separator=b" "):
+    def join(self, separator=" "):
         """
         Join the words of this passphrase.
 
@@ -186,33 +191,33 @@ class Passphrase(list):
 
         Return a byte-string.
         """
-        return bytes(separator).join(self)
+        return separator.join("".join(w) for w in self)
 
 
-def ord_range(first, last):
+def char_range(first, last):
     """
-    A bounds-included range of character ordinals.
+    A bounds-included range of characters.
 
     Take:
         first   the first character in the range
         last    the last character in the range
 
-    Return a range from `ord(first)` to `ord(last)` inclusive.
+    Return a generator of the characters from `first` to `last` inclusive.
     """
-    return range(ord(first), ord(last) + 1)
+    return (chr(i) for i in range(ord(first), ord(last) + 1))
 
 
 # Predefined charsets.
-COMMON_CHARSETS = {
-    "d": set(ord_range("0", "9")),
-    "u": set(ord_range("A", "Z")),
-    "l": set(ord_range("a", "z")),
+CHARSETS_TAGS = {
+    "d": set(char_range("0", "9")),
+    "u": set(char_range("A", "Z")),
+    "l": set(char_range("a", "z")),
     "s": set().union(
-        ord_range("!", "/"),
-        ord_range(":", "@"),
-        ord_range("[", "`"),
-        ord_range("{", "~"),
-    )
+        char_range("!", "/"),
+        char_range(":", "@"),
+        char_range("[", "`"),
+        char_range("{", "~"),
+    ),
 }
 
 
@@ -288,9 +293,9 @@ def parse_charset(expr):
 
         for sub in findall(r"[^-]-[^-]|.", spec):
             if len(sub) == 1:
-                charset.add(ord(sub))
+                charset.add(sub)
             else:
-                charset.update(ord_range(*sub.split("-")))
+                charset.update(char_range(*sub.split("-")))
 
         return charset
 
@@ -299,7 +304,7 @@ def parse_charset(expr):
         if tag == "[":
             return charset.union(parse_charset(expr[i:]))
         try:
-            charset.update(COMMON_CHARSETS[tag])
+            charset.update(CHARSETS_TAGS[tag])
         except KeyError as e:
             raise ValueError("unknown charset tag: %s" % e.args)
 
@@ -337,13 +342,12 @@ def main():
         print("Error: %s" % msg, file=stderr)
         return exit_status
 
-    source = dictionary("/usr/share/dict/words")
+    source = dictionary("/usr/share/dict/words", "UTF-8")
     capitalize = False
     randomize = []
     least_entropy = 0
-    translate = bytearray(range(256))
-    delete = bytearray()
-    separator = b" "
+    translate = {}
+    separator = " "
     max_word_length = False
 
     try:
@@ -390,16 +394,16 @@ def main():
             randomize.append(tuple(cs))
 
         elif flag in ("-s", "--separator"):
-            separator = arg.encode("UTF-8")
+            separator = arg
 
         elif flag in ("-T", "--translate"):
-            xs, ys = arg.encode().split(b":", 1)
+            xs, ys = arg.split(":", 1)
             if len(xs) < len(ys):
                 return error("%s: characters in <ys> outnumber <xs>" % flag)
             for x, y in zip(xs, ys):
-                translate[x] = y
+                translate[ord(x)] = y
             for x in xs[len(ys):]:
-                delete.append(x)
+                translate[ord(x)] = None
 
         elif flag in ("-E", "--least-entropy"):
             try:
@@ -427,13 +431,13 @@ def main():
 
     if max_word_length:
         pp.shorten_each(max_word_length)
-    pp.translate(translate, delete)
+    pp.translate(translate)
     if randomize:
         pp.randomize(randomize)
     if capitalize:
         pp.capitalize()
 
-    print(pp.join(separator).decode())
+    print(pp.join(separator))
 
 
 if __name__ == "__main__":
