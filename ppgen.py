@@ -11,7 +11,7 @@ from secrets import randbelow  # Our default CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 
 def select(source, n, randbelow=randbelow):
@@ -33,14 +33,20 @@ def select(source, n, randbelow=randbelow):
     """
     if n < 0:
         raise ValueError("selection size must be non-negative")
+    if n == 0:
+        return [], 0
+
+    source = iter(source)
 
     # Provisional selection.
-    head = [next(source) for _ in range(n)]
+    try:
+        head = [next(source) for _ in range(n)]
+    except StopIteration:
+        raise RuntimeError("source was too short")
     selection = [head.pop(randbelow(len(head))) for _ in range(n)]
-    # Provisional source length.
-    i = n
 
     # Maintain a random selection as we go over the source.
+    i = n - 1
     for i, el in enumerate(source, n):
         r = randbelow(i)
         if r < n:
