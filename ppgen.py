@@ -11,7 +11,7 @@ from secrets import randbelow  # Our default CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 
 def select(source, n, randbelow=randbelow):
@@ -98,7 +98,10 @@ class Passphrase(list):
         if length <= 0:
             raise ValueError("passphrase length must be positive")
 
-        words, space = select(dictionary, length, randbelow)
+        try:
+            words, space = select(dictionary, length, randbelow)
+        except RuntimeError:
+            raise RuntimeError("dictionary is too short")
         entropy = sum(log2(n) for n in range(space, space - length, -1))
         return Passphrase(words, randbelow), entropy
 
@@ -426,7 +429,10 @@ def main():
     if length < 1:
         return error("length must be positive")
 
-    pp, entropy = Passphrase.random(source, length)
+    try:
+        pp, entropy = Passphrase.random(source, length)
+    except RuntimeError as e:
+        return error(e)
 
     if entropy < least_entropy:
         return error(
