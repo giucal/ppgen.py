@@ -11,7 +11,7 @@ from secrets import randbelow  # Our default CSPRNG.
 from math import log2
 from re import fullmatch, findall
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 
 def select(source, n, randbelow=randbelow):
@@ -131,6 +131,14 @@ class Passphrase(list):
         Return self.
         """
         return self.replace(i, str.title)
+
+    def case_fold(self):
+        """
+        Down-case all letters.
+        """
+        for i in range(len(self)):
+            self[i] = [c.lower() for c in self[i]]
+        return self
 
     def shorten_each(self, max_length):
         """
@@ -336,6 +344,7 @@ def main():
                 "\n"
                 "\nOptions:"
                 "\n    -C --capitalize              capitalize the first character (if applicable)"
+                "\n    -F --case-fold               down-case all letters to begin with"
                 "\n    -W --word-length=<n>         take just <n> characters per word"
                 "\n    -R --randomize=<charset>     swap random character with another from <charset>"
                 "\n    -T --translate=<xs>:<ys>     translate corresponding characters of <xs> to <ys>"
@@ -353,6 +362,7 @@ def main():
 
     source = dictionary("/usr/share/dict/words", "UTF-8")
     capitalize = False
+    case_fold = False
     randomize = []
     least_entropy = 0
     translate = {}
@@ -362,9 +372,10 @@ def main():
     try:
         options, positionals = getopt(
             argv[1:],
-            "CW:R:T:E:s:f:h",
+            "CFW:R:T:E:s:f:h",
             (
                 "capitalize",
+                "case-fold",
                 "word-length=",
                 "randomize=",
                 "translate=",
@@ -386,6 +397,9 @@ def main():
 
         elif flag in ("-C", "--capitalize"):
             capitalize = True
+
+        elif flag in ("-F", "--case-fold"):
+            case_fold = True
 
         elif flag in ("-W", "--word-length"):
             try:
@@ -443,6 +457,8 @@ def main():
 
     if max_word_length:
         pp.shorten_each(max_word_length)
+    if case_fold:
+        pp.case_fold()
     pp.translate(translate)
     if randomize:
         pp.randomize(randomize)
