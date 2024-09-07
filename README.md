@@ -212,4 +212,10 @@ stream, and have any finite length.
 Installation
 ------------
 
+With `pipx`:
+
+    pipx install git+https://github.com/giucal/ppgen.py
+
+With `pip`:
+
     pip3 install --user git+https://github.com/giucal/ppgen.py
